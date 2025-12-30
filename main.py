@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
+from contextlib import asynccontextmanager
 from database import Base, engine
 import logging
 import traceback
@@ -27,15 +28,34 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Create all tables
-Base.metadata.create_all(bind=engine)
+
+# Lifespan context manager for startup/shutdown events
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Handle application startup and shutdown events"""
+    # Startup
+    logger.info("OG Soda FastAPI Service starting up...")
+    try:
+        # Create all tables
+        Base.metadata.create_all(bind=engine)
+        logger.info("Database connection established")
+    except Exception as e:
+        logger.error(f"Database connection error: {str(e)}")
+        raise
+    
+    yield
+    
+    # Shutdown
+    logger.info("OG Soda FastAPI Service shutting down...")
+
 
 app = FastAPI(
     title="OG Soda FastAPI Service",
     version="1.0",
     description="API for OG Soda order management system",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
+    lifespan=lifespan
 )
 
 # Configure CORS
@@ -115,16 +135,3 @@ app.include_router(orders.router)
 app.include_router(admin.router)
 app.include_router(order_temp_router.router)
 app.include_router(users.router)
-
-
-@app.on_event("startup")
-async def startup_event():
-    """Runs on application startup"""
-    logger.info("OG Soda FastAPI Service starting up...")
-    logger.info("Database connection established")
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    """Runs on application shutdown"""
-    logger.info("OG Soda FastAPI Service shutting down...")
