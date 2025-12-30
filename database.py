@@ -6,6 +6,10 @@ This module handles:
 - SessionLocal for database sessions
 - Base class for ORM models
 - get_db() dependency for FastAPI routes
+
+Environment Support:
+- dev_local: Local development database
+- staging: Render PostgreSQL database (production)
 """
 
 import os
@@ -17,16 +21,31 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
+# Get environment (dev_local, staging, or production)
+ENV = os.getenv("ENV", "dev_local")
+
 
 # -----------------------------
 # DATABASE CONNECTION URL
 # -----------------------------
 
-# Get database URL from environment variable, with fallback
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql://postgres:Bala03@localhost:5432/og_database"
-)
+# Database URLs for different environments
+DATABASE_URLS = {
+    "dev_local": "postgresql://postgres:Bala03@localhost:5432/og_database",
+    "staging": "postgresql://og_user:4cju7zo9oKzqdnDijYWQpIE4fyBQBeGm@dpg-d59qu375r7bs739eiu40-a.oregon-postgres.render.com/og_database_0vc9",
+    "production": os.getenv("DATABASE_URL", "")  # For Render production
+}
+
+# Get database URL based on environment
+# Priority: DATABASE_URL env var > environment-specific config
+if os.getenv("DATABASE_URL"):
+    # If DATABASE_URL is explicitly set (e.g., by Render), use it
+    DATABASE_URL = os.getenv("DATABASE_URL")
+elif ENV in DATABASE_URLS:
+    DATABASE_URL = DATABASE_URLS[ENV]
+else:
+    # Fallback to dev_local
+    DATABASE_URL = DATABASE_URLS["dev_local"]
 
 
 # -----------------------------
@@ -34,11 +53,22 @@ DATABASE_URL = os.getenv(
 # -----------------------------
 
 # Create engine with connection pooling for better performance
+# Render free tier has limited database connections (max 5-10)
+# Using conservative pool sizes to avoid connection limit errors
+if ENV == "staging" or os.getenv("RENDER"):
+    # Render free tier: Use smaller pool to stay within limits
+    pool_size = 3
+    max_overflow = 2  # Total max: 5 connections
+else:
+    # Local development: Can use more connections
+    pool_size = 10
+    max_overflow = 20
+
 engine = create_engine(
     DATABASE_URL,
     poolclass=QueuePool,
-    pool_size=10,  # Number of connections to maintain
-    max_overflow=20,  # Maximum number of connections beyond pool_size
+    pool_size=pool_size,
+    max_overflow=max_overflow,
     pool_pre_ping=True,  # Verify connections before using them
     echo=False  # Set to True for SQL query logging (debugging)
 )
