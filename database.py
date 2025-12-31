@@ -21,13 +21,23 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Detect if running on Render
-IS_RENDER = bool(os.getenv("RENDER") or os.getenv("RENDER_SERVICE_NAME") or os.getenv("RENDER_EXTERNAL_URL"))
+# Detect if running on Render (check multiple indicators)
+IS_RENDER = bool(
+    os.getenv("RENDER") or 
+    os.getenv("RENDER_SERVICE_NAME") or 
+    os.getenv("RENDER_EXTERNAL_URL") or
+    os.getenv("RENDER_SERVICE_ID") or
+    "/opt/render" in os.getcwd()  # Render uses /opt/render/project
+)
 
 # Get environment (dev_local, staging, or production)
 # If on Render and ENV not set, default to staging
 if IS_RENDER and not os.getenv("ENV"):
     ENV = "staging"
+    import logging
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
+    logger.info("🔵 Render environment detected - using staging configuration")
 else:
     ENV = os.getenv("ENV", "dev_local")
 
