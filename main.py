@@ -7,6 +7,7 @@ from contextlib import asynccontextmanager
 from database import Base, engine
 import logging
 import traceback
+import os
 
 # Import models so SQLAlchemy creates tables
 from models import login, customer, order, order_temp, user
@@ -35,12 +36,24 @@ async def lifespan(app: FastAPI):
     """Handle application startup and shutdown events"""
     # Startup
     logger.info("OG Soda FastAPI Service starting up...")
+    
+    # Log database configuration (without password)
+    from database import DATABASE_URL, ENV
+    db_url_safe = DATABASE_URL.split("@")[-1] if "@" in DATABASE_URL else "***"
+    logger.info(f"Environment: {ENV}")
+    logger.info(f"Database host: {db_url_safe}")
+    logger.info(f"DATABASE_URL set: {bool(os.getenv('DATABASE_URL'))}")
+    
     try:
         # Create all tables
         Base.metadata.create_all(bind=engine)
         logger.info("Database connection established")
     except Exception as e:
         logger.error(f"Database connection error: {str(e)}")
+        logger.error("Please ensure:")
+        logger.error("1. Database is linked in Render dashboard")
+        logger.error("2. DATABASE_URL environment variable is set")
+        logger.error("3. Database credentials are correct")
         raise
     
     yield

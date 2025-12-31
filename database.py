@@ -38,14 +38,22 @@ DATABASE_URLS = {
 
 # Get database URL based on environment
 # Priority: DATABASE_URL env var > environment-specific config
-if os.getenv("DATABASE_URL"):
-    # If DATABASE_URL is explicitly set (e.g., by Render), use it
-    DATABASE_URL = os.getenv("DATABASE_URL")
-elif ENV in DATABASE_URLS:
-    DATABASE_URL = DATABASE_URLS[ENV]
-else:
-    # Fallback to dev_local
-    DATABASE_URL = DATABASE_URLS["dev_local"]
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if not DATABASE_URL:
+    # If DATABASE_URL is not set, use environment-specific config
+    if ENV in DATABASE_URLS:
+        DATABASE_URL = DATABASE_URLS[ENV]
+    else:
+        # Fallback to dev_local
+        DATABASE_URL = DATABASE_URLS["dev_local"]
+    
+    # Log warning if using fallback on Render
+    if os.getenv("RENDER") or os.getenv("ENV") == "staging":
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.warning(f"DATABASE_URL not set! Using fallback for ENV={ENV}")
+        logger.warning(f"Please link your database in Render dashboard or set DATABASE_URL environment variable")
 
 
 # -----------------------------
