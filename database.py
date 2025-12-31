@@ -21,8 +21,15 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
+# Detect if running on Render
+IS_RENDER = bool(os.getenv("RENDER") or os.getenv("RENDER_SERVICE_NAME") or os.getenv("RENDER_EXTERNAL_URL"))
+
 # Get environment (dev_local, staging, or production)
-ENV = os.getenv("ENV", "dev_local")
+# If on Render and ENV not set, default to staging
+if IS_RENDER and not os.getenv("ENV"):
+    ENV = "staging"
+else:
+    ENV = os.getenv("ENV", "dev_local")
 
 
 # -----------------------------
