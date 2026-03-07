@@ -49,7 +49,7 @@ If you're NOT using `render.yaml`, you need to manually set these in Render dash
    - **How to set**: Link your PostgreSQL database in Render dashboard
    - **Value**: Automatically populated when database is linked
    - **Format**: `postgresql://user:password@host:port/database`
-   - **Your value**: `postgresql://og_user:4cju7zo9oKzqdnDijYWQpIE4fyBQBeGm@dpg-d59qu375r7bs739eiu40-a.oregon-postgres.render.com/og_database_0vc9`
+   - **Your value**: `postgresql://og_database_30df_user:s39cVEANajU2fxGhYnz0KaFmEIGP4Lnt@dpg-d6l1cahaae7s73ft7os0-a.oregon-postgres.render.com/og_database_30df`
 
 2. **`ENV`** (Optional but recommended)
    - **Value**: `staging`
@@ -68,7 +68,7 @@ If you're NOT using `render.yaml`, you need to manually set these in Render dash
 3. Click "Add Environment Variable"
 4. Add each variable:
    - Key: `DATABASE_URL`
-   - Value: `postgresql://og_user:4cju7zo9oKzqdnDijYWQpIE4fyBQBeGm@dpg-d59qu375r7bs739eiu40-a.oregon-postgres.render.com/og_database_0vc9`
+   - Value: `postgresql://og_database_30df_user:s39cVEANajU2fxGhYnz0KaFmEIGP4Lnt@dpg-d6l1cahaae7s73ft7os0-a.oregon-postgres.render.com/og_database_30df`
 5. Repeat for `ENV` = `staging` and `RENDER` = `"true"`
 
 ---
@@ -158,4 +158,7 @@ After deployment, check if variables are set:
 | **Without render.yaml** | ✅ **YES** | Must set `DATABASE_URL`, `ENV`, `RENDER` |
 
 **Bottom Line**: If you use `render.yaml`, Render handles everything automatically. Just link your database and you're done! 🎉
+
+
+
 

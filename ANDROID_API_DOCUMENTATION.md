@@ -29,8 +29,8 @@ Accept: application/json
 ### Request Body
 ```json
 {
-  "identifier": "mail4bala03@gmail.com",
-  "password": "Bala03@rx3"
+  "identifier": "your_email_or_phone",
+  "password": "your_password"
 }
 ```
 
@@ -196,7 +196,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
         
         // Example login call
-        loginUser("mail4bala03@gmail.com", "Bala03@rx3")
+        loginUser("your_email@example.com", "your_password")
     }
     
     private fun loginUser(email: String, password: String) {
@@ -351,8 +351,8 @@ curl -X POST \
   -H 'Content-Type: application/json' \
   -H 'Accept: application/json' \
   -d '{
-    "identifier": "mail4bala03@gmail.com",
-    "password": "Bala03@rx3"
+    "identifier": "your_email_or_phone",
+    "password": "your_password"
   }'
 ```
 
@@ -369,6 +369,9 @@ curl -X POST \
 - `last_login`: Last login timestamp (ISO 8601 format)
 - `created_at`: Account creation timestamp
 - `updated_at`: Last update timestamp
+
+
+
 
 
 

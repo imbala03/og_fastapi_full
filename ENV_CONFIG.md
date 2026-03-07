@@ -31,16 +31,16 @@ DATABASE_URL=postgresql://postgres:Bala03@localhost:5432/og_database
 **Environment Variable:**
 ```env
 ENV=staging
-DATABASE_URL=postgresql://og_user:4cju7zo9oKzqdnDijYWQpIE4fyBQBeGm@dpg-d59qu375r7bs739eiu40-a.oregon-postgres.render.com/og_database_0vc9
+DATABASE_URL=postgresql://og_database_30df_user:s39cVEANajU2fxGhYnz0KaFmEIGP4Lnt@dpg-d6l1cahaae7s73ft7os0-a.oregon-postgres.render.com/og_database_30df
 ```
 
 **Database Credentials:**
-- Host: `dpg-d59qu375r7bs739eiu40-a.oregon-postgres.render.com`
+- Host: `dpg-d6l1cahaae7s73ft7os0-a.oregon-postgres.render.com`
 - Port: `5432`
-- Database: `og_database_0vc9`
-- Username: `og_user`
-- Password: `4cju7zo9oKzqdnDijYWQpIE4fyBQBeGm`
-- Internal Hostname: `dpg-d59qu375r7bs739eiu40-a`
+- Database: `og_database_30df`
+- Username: `og_database_30df_user`
+- Password: (use value from Render dashboard)
+- Internal Hostname: `dpg-d6l1cahaae7s73ft7os0-a`
 
 ## Setting Up Environment Variables
 
@@ -96,7 +96,10 @@ Or using the database directly:
 # For local development
 psql -h localhost -U postgres -d og_database
 
-# For Render staging
-PGPASSWORD=4cju7zo9oKzqdnDijYWQpIE4fyBQBeGm psql -h dpg-d59qu375r7bs739eiu40-a.oregon-postgres.render.com -U og_user og_database_0vc9
+# For Render staging (set PGPASSWORD from Render dashboard or use connection string)
+# psql -h dpg-d6l1cahaae7s73ft7os0-a.oregon-postgres.render.com -U og_database_30df_user og_database_30df
 ```
+
+
+
 

@@ -7,6 +7,8 @@ class Order(Base):
 
     order_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=True)
+    # Model A: store trays taken and returned; trays_holding is derived in code.
+    trays_taken = Column(Integer, default=0, nullable=False)
     trays_holding = Column(Integer, default=0, nullable=False)
     trays_returned = Column(Integer, default=0, nullable=False)
     bottles_holding = Column(Integer, default=0, nullable=False)
