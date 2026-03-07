@@ -72,6 +72,17 @@ if not DATABASE_URL:
         logger.warning(f"DATABASE_URL not set! Using fallback for ENV={ENV}")
         logger.warning(f"Please link your database in Render dashboard or set DATABASE_URL environment variable")
 
+# Render PostgreSQL (internal or external) may require SSL
+if DATABASE_URL and "sslmode=" not in DATABASE_URL:
+    is_render_db = (
+        "render.com" in DATABASE_URL
+        or "oregon-postgres.render.com" in DATABASE_URL
+        or "@dpg-" in DATABASE_URL  # internal host e.g. dpg-d6l1cahaae7s73ft7os0-a
+    )
+    if is_render_db:
+        _sep = "&" if "?" in DATABASE_URL else "?"
+        DATABASE_URL = f"{DATABASE_URL}{_sep}sslmode=require"
+
 
 # -----------------------------
 # SQLALCHEMY ENGINE + SESSION
