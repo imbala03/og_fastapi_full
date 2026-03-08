@@ -69,3 +69,16 @@ class OrderLatestHoldingsResponse(BaseModel):
     bottles_damaged: int
 
     model_config = {"from_attributes": True}
+
+
+class CustomerTotalHoldingsResponse(BaseModel):
+    """
+    Cumulative trays/bottles holding and damaged across ALL orders for a customer.
+    Use this for 'customer balance' — not the latest order only.
+    """
+
+    customer_id: int
+    total_orders: int
+    total_trays_holding: int  # sum of trays_holding across all orders
+    total_bottles_holding: int  # sum of bottles_holding across all orders
+    total_bottles_damaged: int  # sum of bottles_damaged across all orders

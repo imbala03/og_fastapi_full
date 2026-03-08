@@ -7,7 +7,7 @@ from datetime import datetime, date
 from database import get_db
 from models.order import Order
 from models.user import User, UserRole
-from schemas.order import OrderCreate, OrderUpdate, OrderResponse, OrderSummaryResponse, AgentOrderSummaryResponse, OrderLatestHoldingsResponse
+from schemas.order import OrderCreate, OrderUpdate, OrderResponse, OrderSummaryResponse, AgentOrderSummaryResponse, OrderLatestHoldingsResponse, CustomerTotalHoldingsResponse
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 
@@ -80,6 +80,7 @@ def get_customer_latest_holdings(customer_id: int, db: Session = Depends(get_db)
     """
     Return the latest order (by created_at) for the given customer with
     trays_holding, bottles_holding, and bottles_damaged.
+    Use this for 'last delivery' only. For customer balance use total-holdings.
     """
     order = (
         db.query(Order)
@@ -90,6 +91,38 @@ def get_customer_latest_holdings(customer_id: int, db: Session = Depends(get_db)
     if not order:
         raise HTTPException(status_code=404, detail="No orders found for this customer")
     return order
+
+
+@router.get("/customer/{customer_id}/total-holdings", response_model=CustomerTotalHoldingsResponse)
+def get_customer_total_holdings(customer_id: int, db: Session = Depends(get_db)):
+    """
+    Return cumulative trays_holding, bottles_holding, bottles_damaged across
+    ALL orders for this customer. Use for customer balance (no discrepancy).
+    Example: two orders (1 tray, 1 bottle) and (2 trays, 2 bottles) with nothing
+    returned -> total_trays_holding=3, total_bottles_holding=3.
+    """
+    from models.customer import Customer
+    cust = db.query(Customer).filter(Customer.id == customer_id).first()
+    if not cust:
+        raise HTTPException(status_code=404, detail="Customer not found")
+
+    result = (
+        db.query(
+            func.count(Order.order_id).label("total_orders"),
+            func.coalesce(func.sum(Order.trays_holding), 0).label("total_trays_holding"),
+            func.coalesce(func.sum(Order.bottles_holding), 0).label("total_bottles_holding"),
+            func.coalesce(func.sum(Order.bottles_damaged), 0).label("total_bottles_damaged"),
+        )
+        .filter(Order.customer_id == customer_id)
+        .first()
+    )
+    return CustomerTotalHoldingsResponse(
+        customer_id=customer_id,
+        total_orders=result.total_orders or 0,
+        total_trays_holding=int(result.total_trays_holding) if result.total_trays_holding is not None else 0,
+        total_bottles_holding=int(result.total_bottles_holding) if result.total_bottles_holding is not None else 0,
+        total_bottles_damaged=int(result.total_bottles_damaged) if result.total_bottles_damaged is not None else 0,
+    )
 
 
 @router.get("/delivered-by/{delivered_by}", response_model=list[OrderResponse])
