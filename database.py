@@ -121,6 +121,32 @@ Base = declarative_base()
 
 
 # -----------------------------
+# STARTUP MIGRATIONS (add columns if missing; no DB shell needed on free hosting)
+# -----------------------------
+
+def run_additive_migrations(eng):
+    """
+    Add new columns to existing tables if they don't exist.
+    Safe to run on every startup; uses IF NOT EXISTS so idempotent.
+    Allows free-tier hosting (e.g. Render) to work without manual DB shell.
+    """
+    from sqlalchemy import text
+    migrations = [
+        "ALTER TABLE order_temp ADD COLUMN IF NOT EXISTS bottles_taken INTEGER NOT NULL DEFAULT 0",
+        "ALTER TABLE orders ADD COLUMN IF NOT EXISTS bottles_taken INTEGER NOT NULL DEFAULT 0",
+    ]
+    for sql in migrations:
+        try:
+            with eng.connect() as conn:
+                conn.execute(text(sql))
+                conn.commit()
+        except Exception as e:
+            # Log but don't fail startup (e.g. table might not exist yet)
+            import logging
+            logging.getLogger(__name__).warning(f"Additive migration skipped: {e}")
+
+
+# -----------------------------
 # DEPENDENCY: GET DB SESSION
 # -----------------------------
 

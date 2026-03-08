@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from contextlib import asynccontextmanager
-from database import Base, engine
+from database import Base, engine, run_additive_migrations
 import logging
 import traceback
 import os
@@ -47,6 +47,8 @@ async def lifespan(app: FastAPI):
     try:
         # Create all tables
         Base.metadata.create_all(bind=engine)
+        # Add new columns to existing tables (no manual DB shell needed on free hosting)
+        run_additive_migrations(engine)
         logger.info("Database connection established")
     except Exception as e:
         logger.error(f"Database connection error: {str(e)}")
