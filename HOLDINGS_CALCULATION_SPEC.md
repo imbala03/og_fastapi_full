@@ -29,8 +29,9 @@ When **nothing is returned** (returned = 0), holding = taken for that order. So 
 | Use case | Endpoint | Returns |
 |----------|----------|--------|
 | Latest order only (“last delivery”) | `GET /orders/customer/{id}/latest-holdings` | That one order’s holding (e.g. 2,2). |
-| **Customer balance (no discrepancy)** | `GET /orders/customer/{id}/total-holdings` | Sum of holding across all orders (e.g. 3,3). |
-| All orders (raw list) | `GET /orders/customer/{id}` | Each order with its own holding; sum in the app if needed. |
+| **Customer balance (orders)** | `GET /orders/customer/{id}/total-holdings` | Sum across all orders (e.g. 3,3). |
+| **Customer balance (order-temp)** | `GET /order-temp/customer/{id}/total-holdings` | Sum across all order_temp rows. Use when app submits via POST order-temp/ and shows balance from temp orders. |
+| All orders (raw list) | `GET /orders/customer/{id}` or `GET /order-temp/customer/{id}` | Each row with its own holding; sum in app if needed. |
 
 ---
 

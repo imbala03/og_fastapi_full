@@ -1,8 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from database import get_db
+from models.customer import Customer
 from models.order_temp import OrderTemp
 from schemas.order_temp import OrderTempCreate, OrderTempUpdate, OrderTempResponse
+from schemas.order import CustomerTotalHoldingsResponse
 
 router = APIRouter(
     prefix="/order-temp",
@@ -14,7 +17,6 @@ router = APIRouter(
 def create_temp_order(data: OrderTempCreate, db: Session = Depends(get_db)):
     # Ensure customer exists if customer_id is provided
     if data.customer_id:
-        from models.customer import Customer
         cust = db.query(Customer).filter(Customer.id == data.customer_id).first()
         if not cust:
             raise HTTPException(status_code=404, detail="Customer not found")
@@ -61,6 +63,36 @@ def get_customer_temp_orders(id: int, db: Session = Depends(get_db)):
     """
     orders = db.query(OrderTemp).filter(OrderTemp.customer_id == id).all()
     return orders
+
+
+@router.get("/customer/{customer_id}/total-holdings", response_model=CustomerTotalHoldingsResponse)
+def get_customer_temp_total_holdings(customer_id: int, db: Session = Depends(get_db)):
+    """
+    Cumulative trays_holding, bottles_holding, bottles_damaged across ALL order_temp
+    rows for this customer. Use this for customer balance when using order-temp
+    (e.g. after submit, show total_trays_holding / total_bottles_holding = 3,3 not 2,2).
+    """
+    cust = db.query(Customer).filter(Customer.id == customer_id).first()
+    if not cust:
+        raise HTTPException(status_code=404, detail="Customer not found")
+
+    result = (
+        db.query(
+            func.count(OrderTemp.order_id).label("total_orders"),
+            func.coalesce(func.sum(OrderTemp.trays_holding), 0).label("total_trays_holding"),
+            func.coalesce(func.sum(OrderTemp.bottles_holding), 0).label("total_bottles_holding"),
+            func.coalesce(func.sum(OrderTemp.bottles_damaged), 0).label("total_bottles_damaged"),
+        )
+        .filter(OrderTemp.customer_id == customer_id)
+        .first()
+    )
+    return CustomerTotalHoldingsResponse(
+        customer_id=customer_id,
+        total_orders=result.total_orders or 0,
+        total_trays_holding=int(result.total_trays_holding) if result.total_trays_holding is not None else 0,
+        total_bottles_holding=int(result.total_bottles_holding) if result.total_bottles_holding is not None else 0,
+        total_bottles_damaged=int(result.total_bottles_damaged) if result.total_bottles_damaged is not None else 0,
+    )
 
 
 @router.get("/delivered-by/{delivered_by}", response_model=list[OrderTempResponse])
