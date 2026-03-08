@@ -11,6 +11,8 @@ class Order(Base):
     trays_taken = Column(Integer, default=0, nullable=False)
     trays_holding = Column(Integer, default=0, nullable=False)
     trays_returned = Column(Integer, default=0, nullable=False)
+    # Model A for bottles: store taken and returned; bottles_holding derived in code.
+    bottles_taken = Column(Integer, default=0, nullable=False)
     bottles_holding = Column(Integer, default=0, nullable=False)
     bottles_returned = Column(Integer, default=0, nullable=False)
     bottles_damaged = Column(Integer, default=0, nullable=False)

@@ -10,6 +10,7 @@ class OrderTemp(Base):
     trays_taken = Column(Integer, default=0, nullable=False)
     trays_holding = Column(Integer, default=0, nullable=False)
     trays_returned = Column(Integer, default=0, nullable=False)
+    bottles_taken = Column(Integer, default=0, nullable=False)
     bottles_holding = Column(Integer, default=0, nullable=False)
     bottles_returned = Column(Integer, default=0, nullable=False)
     bottles_damaged = Column(Integer, default=0, nullable=False)

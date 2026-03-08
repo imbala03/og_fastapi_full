@@ -23,14 +23,19 @@ def create_order(data: OrderCreate, db: Session = Depends(get_db)):
             if not cust:
                 raise HTTPException(status_code=404, detail="Customer not found")
 
-        # Derive trays_holding using Model A: trays_taken - trays_returned
+        # Derive trays_holding and bottles_holding (Model A)
         if data.trays_taken < 0 or data.trays_returned < 0:
             raise HTTPException(status_code=400, detail="Tray counts cannot be negative")
         if data.trays_returned > data.trays_taken:
             raise HTTPException(status_code=400, detail="Trays returned cannot exceed trays taken")
+        if data.bottles_taken < 0 or data.bottles_returned < 0:
+            raise HTTPException(status_code=400, detail="Bottle counts cannot be negative")
+        if data.bottles_returned > data.bottles_taken:
+            raise HTTPException(status_code=400, detail="Bottles returned cannot exceed bottles taken")
 
         order_data = data.dict()
         order_data["trays_holding"] = order_data["trays_taken"] - order_data["trays_returned"]
+        order_data["bottles_holding"] = order_data["bottles_taken"] - order_data["bottles_returned"]
 
         order = Order(**order_data)
         db.add(order)
@@ -206,16 +211,23 @@ def update_order(order_id: int, data: OrderUpdate, db: Session = Depends(get_db)
     # Update fields (only provided fields)
     update_data = data.dict(exclude_unset=True)
 
-    # If tray fields are being updated, recompute trays_holding
+    # Recompute trays_holding and bottles_holding (Model A)
     trays_taken = update_data.get("trays_taken", order.trays_taken)
     trays_returned = update_data.get("trays_returned", order.trays_returned)
+    bottles_taken = update_data.get("bottles_taken", order.bottles_taken)
+    bottles_returned = update_data.get("bottles_returned", order.bottles_returned)
 
     if trays_taken < 0 or trays_returned < 0:
         raise HTTPException(status_code=400, detail="Tray counts cannot be negative")
     if trays_returned > trays_taken:
         raise HTTPException(status_code=400, detail="Trays returned cannot exceed trays taken")
+    if bottles_taken < 0 or bottles_returned < 0:
+        raise HTTPException(status_code=400, detail="Bottle counts cannot be negative")
+    if bottles_returned > bottles_taken:
+        raise HTTPException(status_code=400, detail="Bottles returned cannot exceed bottles taken")
 
     update_data["trays_holding"] = trays_taken - trays_returned
+    update_data["bottles_holding"] = bottles_taken - bottles_returned
 
     for key, value in update_data.items():
         setattr(order, key, value)
