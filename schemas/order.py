@@ -57,3 +57,15 @@ class AgentOrderSummaryResponse(BaseModel):
     total_bottles_delivered: int
     total_bottles_returned: int
     total_bottles_damaged: int
+
+
+class OrderLatestHoldingsResponse(BaseModel):
+    """Latest order (by created_at) for a customer: trays_holding, bottles_holding, bottles_damaged."""
+
+    order_id: int
+    created_at: datetime
+    trays_holding: int
+    bottles_holding: int
+    bottles_damaged: int
+
+    model_config = {"from_attributes": True}

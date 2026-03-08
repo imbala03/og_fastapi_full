@@ -7,7 +7,7 @@ from datetime import datetime, date
 from database import get_db
 from models.order import Order
 from models.user import User, UserRole
-from schemas.order import OrderCreate, OrderUpdate, OrderResponse, OrderSummaryResponse, AgentOrderSummaryResponse
+from schemas.order import OrderCreate, OrderUpdate, OrderResponse, OrderSummaryResponse, AgentOrderSummaryResponse, OrderLatestHoldingsResponse
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 
@@ -68,6 +68,23 @@ def get_customer_orders(id: int, db: Session = Depends(get_db)):
     """
     orders = db.query(Order).filter(Order.customer_id == id).all()
     return orders
+
+
+@router.get("/customer/{customer_id}/latest-holdings", response_model=OrderLatestHoldingsResponse)
+def get_customer_latest_holdings(customer_id: int, db: Session = Depends(get_db)):
+    """
+    Return the latest order (by created_at) for the given customer with
+    trays_holding, bottles_holding, and bottles_damaged.
+    """
+    order = (
+        db.query(Order)
+        .filter(Order.customer_id == customer_id)
+        .order_by(Order.created_at.desc())
+        .first()
+    )
+    if not order:
+        raise HTTPException(status_code=404, detail="No orders found for this customer")
+    return order
 
 
 @router.get("/delivered-by/{delivered_by}", response_model=list[OrderResponse])

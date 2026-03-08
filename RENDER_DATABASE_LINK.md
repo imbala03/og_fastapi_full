@@ -1,6 +1,7 @@
-# Render: Use the correct database
+# Render: Use the correct database and repo
 
-If you see **SSL connection has been closed unexpectedly** or connection to a host like `dpg-d43g31ali9vc73d0645g-a`, your Web Service is still using an **old** PostgreSQL instance.
+- **Repo:** This app is **og_fastapi_full**. If your Render service clones **og_fastapi03** instead, change the connected repo in Render → Settings → Repository to `https://github.com/imbala03/og_fastapi_full`.
+- **Database:** If you see **SSL connection has been closed unexpectedly** or connection to a host like `dpg-d43g31ali9vc73d0645g-a`, your Web Service is still using an **old** PostgreSQL instance.
 
 ## Fix: Link the new database (og_database_30df)
 
