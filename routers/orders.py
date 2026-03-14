@@ -57,6 +57,29 @@ def list_orders(db: Session = Depends(get_db)):
     return db.query(Order).all()
 
 
+@router.get("/by-date-range", response_model=list[OrderResponse])
+def get_orders_between_dates(
+    start_date: date = Query(..., description="Start date (YYYY-MM-DD)"),
+    end_date: date = Query(..., description="End date (YYYY-MM-DD)"),
+    db: Session = Depends(get_db),
+):
+    """
+    Return orders whose created_at date is between start_date and end_date (inclusive).
+    """
+    if end_date < start_date:
+        raise HTTPException(status_code=400, detail="end_date must be on or after start_date")
+    orders = (
+        db.query(Order)
+        .filter(
+            cast(Order.created_at, Date) >= start_date,
+            cast(Order.created_at, Date) <= end_date,
+        )
+        .order_by(Order.created_at.asc())
+        .all()
+    )
+    return orders
+
+
 @router.get("/{order_id}", response_model=OrderResponse)
 def get_order(order_id: int, db: Session = Depends(get_db)):
     """Get a specific order by order_id"""
