@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from database import get_db
 from models.customer import Customer
-from schemas.customer import CustomerCreate, CustomerResponse
+from schemas.customer import CustomerCreate, CustomerUpdate, CustomerResponse
 
 router = APIRouter(prefix="/customers", tags=["Customers"])
 
@@ -49,6 +49,20 @@ def get_customer(customer_id: int, db: Session = Depends(get_db)):
     customer = db.query(Customer).filter(Customer.id == customer_id).first()
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
+    return customer
+
+
+@router.put("/{customer_id}", response_model=CustomerResponse)
+def update_customer(customer_id: int, data: CustomerUpdate, db: Session = Depends(get_db)):
+    """Update an existing customer. Send only fields you want to change."""
+    customer = db.query(Customer).filter(Customer.id == customer_id).first()
+    if not customer:
+        raise HTTPException(status_code=404, detail="Customer not found")
+    update_data = data.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(customer, key, value)
+    db.commit()
+    db.refresh(customer)
     return customer
 
 
