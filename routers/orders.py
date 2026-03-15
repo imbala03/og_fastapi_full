@@ -26,12 +26,8 @@ def create_order(data: OrderCreate, db: Session = Depends(get_db)):
         # Derive trays_holding and bottles_holding (Model A)
         if data.trays_taken < 0 or data.trays_returned < 0:
             raise HTTPException(status_code=400, detail="Tray counts cannot be negative")
-        if data.trays_returned > data.trays_taken:
-            raise HTTPException(status_code=400, detail="Trays returned cannot exceed trays taken")
         if data.bottles_taken < 0 or data.bottles_returned < 0:
             raise HTTPException(status_code=400, detail="Bottle counts cannot be negative")
-        if data.bottles_returned > data.bottles_taken:
-            raise HTTPException(status_code=400, detail="Bottles returned cannot exceed bottles taken")
 
         order_data = data.dict()
         order_data["trays_holding"] = order_data["trays_taken"] - order_data["trays_returned"]
@@ -275,12 +271,8 @@ def update_order(order_id: int, data: OrderUpdate, db: Session = Depends(get_db)
 
     if trays_taken < 0 or trays_returned < 0:
         raise HTTPException(status_code=400, detail="Tray counts cannot be negative")
-    if trays_returned > trays_taken:
-        raise HTTPException(status_code=400, detail="Trays returned cannot exceed trays taken")
     if bottles_taken < 0 or bottles_returned < 0:
         raise HTTPException(status_code=400, detail="Bottle counts cannot be negative")
-    if bottles_returned > bottles_taken:
-        raise HTTPException(status_code=400, detail="Bottles returned cannot exceed bottles taken")
 
     update_data["trays_holding"] = trays_taken - trays_returned
     update_data["bottles_holding"] = bottles_taken - bottles_returned
