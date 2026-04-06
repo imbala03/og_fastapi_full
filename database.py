@@ -48,8 +48,10 @@ else:
 
 # Database URLs for different environments
 DATABASE_URLS = {
-    "dev_local": "postgresql://postgres:Bala03@localhost:5432/og_database",
-    "staging": "postgresql://og_database_30df_user:s39cVEANajU2fxGhYnz0KaFmEIGP4Lnt@dpg-d6l1cahaae7s73ft7os0-a.oregon-postgres.render.com/og_database_30df",
+    # Keep secrets out of source control. For local dev, set DATABASE_URL in your environment/.env.
+    "dev_local": os.getenv("DEV_DATABASE_URL", "postgresql://postgres:CHANGE_ME@localhost:5432/og_database"),
+    # On Render, DATABASE_URL is set automatically when the DB is linked (see render.yaml).
+    "staging": os.getenv("STAGING_DATABASE_URL", ""),
     "production": os.getenv("DATABASE_URL", "")  # For Render production (set by Render when DB is linked)
 }
 

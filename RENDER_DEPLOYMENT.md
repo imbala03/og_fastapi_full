@@ -11,9 +11,9 @@ This guide explains how to deploy the OG Soda FastAPI application to Render.
 ## Database Configuration
 
 Your Render PostgreSQL database is already configured:
-- **Database Name**: `og_database_0vc9`
+- **Database Name**: `og_database_szym`
 - **Username**: `og_user`
-- **Host**: `dpg-d59qu375r7bs739eiu40-a.oregon-postgres.render.com`
+- **Host**: `dpg-d79p0k6a2pns73e89ie0-a.oregon-postgres.render.com`
 - **Port**: `5432`
 
 ## Deployment Steps
@@ -43,7 +43,7 @@ Render will automatically detect the `render.yaml` file. If not, use these setti
 
 1. In your Web Service settings, go to "Environment" tab
 2. Under "Add Environment Variable", click "Link Database"
-3. Select your PostgreSQL database: `og_database_0vc9`
+3. Select your PostgreSQL database: `og_database_szym`
 4. Render will automatically add `DATABASE_URL` environment variable
 
 ### 4. Deploy

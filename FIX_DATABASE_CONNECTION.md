@@ -23,7 +23,7 @@ The `DATABASE_URL` environment variable is not set. This happens when:
 1. Go to **Settings** tab
 2. Scroll down to **"Connections"** section
 3. Click **"Link Database"** or **"Add Database"**
-4. Select your PostgreSQL database: **`og_database_30df`**
+4. Select your PostgreSQL database: **`og_database_szym`**
 5. Click **"Link"**
 
 ### Step 3: Verify Environment Variables
@@ -48,7 +48,7 @@ If linking doesn't work, manually set `DATABASE_URL`:
 2. Click **"Add Environment Variable"**
 3. Set:
    - **Key**: `DATABASE_URL`
-   - **Value**: `postgresql://og_database_30df_user:s39cVEANajU2fxGhYnz0KaFmEIGP4Lnt@dpg-d6l1cahaae7s73ft7os0-a.oregon-postgres.render.com/og_database_30df`
+   - **Value**: (paste the connection string from Render → PostgreSQL → Connections)
 4. Click **"Save Changes"**
 5. Redeploy your service
 
@@ -62,7 +62,7 @@ Check that your `render.yaml` has the correct database name:
 envVars:
   - key: DATABASE_URL
     fromDatabase:
-      name: og_database_30df  # ← Make sure this matches your database name
+      name: og_database_szym  # ← Make sure this matches your database name
       property: connectionString
 ```
 
@@ -76,7 +76,7 @@ Once the database is linked, you should see in the logs:
 ```
 ✅ Database connection established
 Environment: staging
-Database host: dpg-d6l1cahaae7s73ft7os0-a.oregon-postgres.render.com/og_database_30df
+Database host: dpg-d79p0k6a2pns73e89ie0-a.oregon-postgres.render.com/og_database_szym
 ```
 
 Instead of:

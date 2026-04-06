@@ -37,7 +37,7 @@ The following files contain **real credentials** that will be committed if you d
    - `RENDER_ENV_VARIABLES.md`, `FIX_DATABASE_CONNECTION.md`: Still contain the full staging connection string (with password) as an example. If the repo is public, consider replacing with `postgresql://user:***@host/db` or instructing users to get the URL from Render.
 
 3. **`README.md`**
-   - Contains `DATABASE_URL=postgresql://postgres:Bala03@...` for local dev. Consider changing to `postgresql://postgres:YOUR_LOCAL_PASSWORD@localhost:5432/og_database` and document that the real value goes in `.env`.
+   - Contains `DATABASE_URL=postgresql://postgres:YOUR_LOCAL_PASSWORD@...` for local dev. Real values should live in `.env` (not committed).
 
 ---
 

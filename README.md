@@ -18,7 +18,7 @@ FastAPI application for OG Soda order management system.
 1. Create a `.env` file in the project root:
 ```env
 ENV=dev_local
-DATABASE_URL=postgresql://postgres:Bala03@localhost:5432/og_database
+DATABASE_URL=postgresql://postgres:YOUR_LOCAL_PASSWORD@localhost:5432/og_database
 ```
 
 2. Install dependencies:

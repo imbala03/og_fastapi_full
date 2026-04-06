@@ -16,7 +16,7 @@ The application supports multiple environments through the `ENV` variable:
 **Environment Variable:**
 ```env
 ENV=dev_local
-DATABASE_URL=postgresql://postgres:Bala03@localhost:5432/og_database
+DATABASE_URL=postgresql://postgres:YOUR_LOCAL_PASSWORD@localhost:5432/og_database
 ```
 
 **Database Credentials:**
@@ -31,16 +31,16 @@ DATABASE_URL=postgresql://postgres:Bala03@localhost:5432/og_database
 **Environment Variable:**
 ```env
 ENV=staging
-DATABASE_URL=postgresql://og_database_30df_user:s39cVEANajU2fxGhYnz0KaFmEIGP4Lnt@dpg-d6l1cahaae7s73ft7os0-a.oregon-postgres.render.com/og_database_30df
+DATABASE_URL=postgresql://og_user:***@dpg-d79p0k6a2pns73e89ie0-a.oregon-postgres.render.com:5432/og_database_szym
 ```
 
 **Database Credentials:**
-- Host: `dpg-d6l1cahaae7s73ft7os0-a.oregon-postgres.render.com`
+- Host: `dpg-d79p0k6a2pns73e89ie0-a.oregon-postgres.render.com`
 - Port: `5432`
-- Database: `og_database_30df`
-- Username: `og_database_30df_user`
+- Database: `og_database_szym`
+- Username: `og_user`
 - Password: (use value from Render dashboard)
-- Internal Hostname: `dpg-d6l1cahaae7s73ft7os0-a`
+- Internal Hostname: `dpg-d79p0k6a2pns73e89ie0-a`
 
 ## Setting Up Environment Variables
 
@@ -49,7 +49,7 @@ DATABASE_URL=postgresql://og_database_30df_user:s39cVEANajU2fxGhYnz0KaFmEIGP4Lnt
 1. Create a `.env` file in the project root:
 ```env
 ENV=dev_local
-DATABASE_URL=postgresql://postgres:Bala03@localhost:5432/og_database
+DATABASE_URL=postgresql://postgres:YOUR_LOCAL_PASSWORD@localhost:5432/og_database
 ```
 
 2. The application will automatically use these credentials for local development.
@@ -97,7 +97,7 @@ Or using the database directly:
 psql -h localhost -U postgres -d og_database
 
 # For Render staging (set PGPASSWORD from Render dashboard or use connection string)
-# psql -h dpg-d6l1cahaae7s73ft7os0-a.oregon-postgres.render.com -U og_database_30df_user og_database_30df
+# psql -h dpg-d79p0k6a2pns73e89ie0-a.oregon-postgres.render.com -U og_user og_database_szym
 ```
 
 
